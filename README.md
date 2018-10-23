@@ -2,7 +2,8 @@
 
 ![PneumaticLab](PneumaticLab.jpg "Pneumatic Lab")
 
-PneumaticsCAD is a computer-aided pneumatic circuit design software. The software is developed in Java.
+PneumaticsCAD is a computer-aided pneumatic circuit design software.
+The software is developed in Java and is an Eclipse project.
 To start the program, use command:
 java tw.com.justiot.pneumatics.PneumaticsCAD
 
