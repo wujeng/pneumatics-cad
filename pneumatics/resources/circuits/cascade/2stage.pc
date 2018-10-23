@@ -1,0 +1,19 @@
+0 Valve PVD42i null 0.0 137 84 0 false -1 null
+0 Connector Stop null 1.5707963267948966 21 20 0 
+0 Connector Stop null 1.5707963267948966 20 43 0 
+0 Connector Stop null 4.71238898038469 310 22 0 
+0 Connector Stop null 4.71238898038469 309 45 0 
+0 Connector 3Way null 3.141592653589793 154 28 0 
+0 Connector 3Way null 3.141592653589793 190 51 0 
+0 Connector Source null 0.0 152 122 0 
+0 Connector Sink null 0.0 169 103 0 
+1 5 2 1 0
+1 3 0 5 1
+1 6 2 2 0
+1 4 0 6 1
+1 0 3 5 0
+1 0 4 6 0
+1 7 0 0 0
+1 8 0 0 1
+
+

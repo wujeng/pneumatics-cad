@@ -1,0 +1,77 @@
+0020
+0 Actuator Piston A 0.0 81 7 0 1 1
+0 Actuator Piston B 0.0 206 9 0 1 1
+0 Valve PVD42 V1 0.0 74 54 2 false -1 null
+0 Valve PVD42 V2 0.0 203 56 2 false -1 null
+0 Valve Button V3 0.0 29 71 0 false -1 null
+0 Valve LimitSwitch a1 0.0 167 73 0 false -1 null
+0 Valve LimitSwitch a0 0.0 232 182 1 false -1 null
+0 Valve LimitSwitch b1 0.0 110 170 0 false -1 null
+0 Valve LimitSwitch b0 0.0 116 71 1 false -1 null
+0 Connector Sink C8 0.0 106 72 0 
+0 Connector Sink C9 0.0 142 184 0 
+0 Connector Sink C11 0.0 235 73 0 
+0 Connector Sink C13 0.0 148 86 0 
+0 Valve PVD42i V9 0.0 174 165 2 false -1 null
+0 Connector Sink C14 0.0 213 192 0 
+0 Connector Source C15 0.0 189 192 0 
+0 Connector 3Way C16 3.141592653589793 191 116 0 
+0 Connector 3Way C17 3.141592653589793 206 136 0 
+0 Connector Stop C18 1.5707963267948966 3 108 0 
+0 Connector Stop C19 1.5707963267948966 3 128 0 
+0 Connector Stop C20 4.71238898038469 305 110 0 
+0 Connector Stop C21 4.71238898038469 309 130 0 
+0 Connector 3Way C22 0.0 44 107 0 
+0 Connector 3Way C23 0.0 163 107 0 
+0 Connector Source C24 0.0 89 89 0 
+0 Connector 3Way C25 3.141592653589793 88 116 0 
+0 Connector 3Way C26 0.0 246 127 0 
+0 Connector Source C27 0.0 218 91 0 
+0 Connector 3Way C28 0.0 131 127 0 
+0 Connector 3Way C29 3.141592653589793 276 136 0 
+0 Connector Sink C50 0.0 61 86 0 
+0 Connector Sink C51 0.0 199 89 0 
+0 Connector Sink C52 0.0 264 202 0 
+1 2 3 0 0
+1 2 4 0 1
+1 3 3 1 0
+1 3 4 1 1
+1 3 6 5 3
+1 9 0 2 1
+1 10 0 7 1
+1 11 0 3 1
+1 12 0 8 1
+1 15 0 13 0
+1 14 0 13 1
+1 13 3 16 0
+1 13 4 17 0
+1 20 0 16 1
+1 22 1 18 0
+1 22 0 4 0
+1 24 0 2 0
+1 23 0 5 0
+1 16 2 23 2
+1 13 6 7 3
+1 25 2 22 2
+1 23 1 25 1
+1 25 0 7 0
+1 3 5 26 0
+1 26 1 17 1
+1 27 0 3 0
+1 17 2 28 2
+1 28 1 19 0
+1 28 0 8 0
+1 2 5 8 3
+1 13 5 6 3
+1 21 0 29 1
+1 29 2 26 2
+1 29 0 6 0
+1 2 6 4 3
+1 30 0 4 1
+1 31 0 5 1
+1 32 0 6 1
+2 0 5 11
+2 0 6 0
+2 1 7 11
+2 1 8 0
+
