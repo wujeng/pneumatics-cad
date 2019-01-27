@@ -1,13 +1,22 @@
 package tw.com.justiot.pneumatics.panel;
 
-import tw.com.justiot.pneumatics.*;
-import tw.com.justiot.pneumatics.config.*;
+import java.awt.BorderLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Enumeration;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import java.util.*;
-//import java.lang.reflect.*;
+import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+
+import tw.com.justiot.pneumatics.PneumaticsCAD;
+import tw.com.justiot.pneumatics.config.CircuitParameter;
+import tw.com.justiot.pneumatics.config.PneumaticConfig;
 
 public class CircuitIconPanel extends JPanel
  {private PneumaticsCAD pneumaticscad;

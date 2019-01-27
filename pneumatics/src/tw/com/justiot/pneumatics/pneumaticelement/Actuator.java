@@ -26,6 +26,7 @@ import tw.com.justiot.pneumatics.config.ActuatorParameter;
 import tw.com.justiot.pneumatics.config.PneumaticConfig;
 import tw.com.justiot.pneumatics.dialog.CustomDialog;
 import tw.com.justiot.pneumatics.dialog.DBDialog;
+import tw.com.justiot.pneumatics.panel.PneumaticListener;
 import tw.com.justiot.pneumatics.part.Port;
 import tw.com.justiot.pneumatics.part.Position;
 
@@ -65,14 +66,14 @@ public class Actuator extends PneumaticElement
   public Port fport,bport;
 
   private static Image LSpressed, LSrelease,LSleft,LSlefty,LSleftn,LSright,LSrighty,LSrightn;
-  public ArrayList valveArray;
+  public ArrayList valveArray;  // Limit Switch Array, pneumatic or electric
   public ArrayList valvePos;
   private Position LSpos1,LSpos2;
   private boolean inLS;
   private int pressedLS;
 
   private boolean firstPopup=true;
-  public Actuator(String mname,PneumaticsCAD pneumaticscad)
+  public Actuator(String mname,PneumaticListener pneumaticscad)
    {super(mname,true, pneumaticscad);
     if(PneumaticConfig.parameter.containsKey(mname))
      {ActuatorParameter ep=(ActuatorParameter) PneumaticConfig.parameter.get(mname);
@@ -608,7 +609,7 @@ public class Actuator extends PneumaticElement
    {Object oldi=valvePos.get(n);
 //    if(obj instanceof Integer) return;
 	valvePos.set(n,i);
-	pneumaticscad.addCommand(new setValvePosCommand(this,valvePos,n,i,oldi));
+	owner.addCommand(new setValvePosCommand(this,valvePos,n,i,oldi));
    }
    
    
@@ -666,7 +667,7 @@ public class Actuator extends PneumaticElement
 */
     valveArray.remove(i);
     valvePos.remove(i);
-    pneumaticscad.addCommand(new removeValveCommand(this,obj));
+    owner.addCommand(new removeValveCommand(this,obj));
    } 
    
   public void mouseReleased(MouseEvent e) {
@@ -854,7 +855,7 @@ public class Actuator extends PneumaticElement
       String option=mi.getText();  
       if(option.equals(Config.getString("Actuator.load")))
        { float oldload=load;      
-         customDialog = new CustomDialog(pneumaticscad.frame,Config.getString("Actuator.load"),Config.getString("Actuator.modifyload"),CustomDialog.VALUE_FLOAT);
+         customDialog = new CustomDialog(owner.getFrame(),Config.getString("Actuator.load"),Config.getString("Actuator.modifyload"),CustomDialog.VALUE_FLOAT);
          customDialog.pack();
          Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
          customDialog.setLocation(
@@ -863,45 +864,45 @@ public class Actuator extends PneumaticElement
          customDialog.setTextField(Float.toString(load));
          customDialog.setVisible(true);
          load=customDialog.getFloat();
-         pneumaticscad.addCommand(new changeLoadCommand(this,oldload,load));
+         owner.addCommand(new changeLoadCommand(this,oldload,load));
          
       }
       else if(option.equals(Config.getString("Actuator.LS1")))
       {
-       ArrayList al=pneumaticscad.pneumatics.pneumaticPanel.getLimitSwitchArray();
+       ArrayList al=pneumaticPanel.getLimitSwitchArray();
        if(al.size()<=0) {
-    	   pneumaticscad.MessageBox(Config.getString("Actuator.noLS"), "Error");
+    	   owner.MessageBox(Config.getString("Actuator.noLS"), "Error");
     	   return;
        }
-       DBDialog dbDialog = new DBDialog(pneumaticscad.frame,al,Config.getString("Actuator.SelectLS1"),false);
+       DBDialog dbDialog = new DBDialog(owner.getFrame(),al,Config.getString("Actuator.SelectLS1"),false);
        dbDialog.pack();
        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
        dbDialog.setLocation(screenSize.width/2 - dbDialog.getSize().width/2,screenSize.height/2 - dbDialog.getSize().height/2);
        dbDialog.setVisible(true);
        Valve ed=(Valve) dbDialog.getObject();  
        addValve(ed,images.length-1);
-       pneumaticscad.repaint();
+       pneumaticPanel.repaint();
        
       }
       else if(option.equals(Config.getString("Actuator.LS2")))
-      {ArrayList al=pneumaticscad.pneumatics.pneumaticPanel.getLimitSwitchArray();
+      {ArrayList al=pneumaticPanel.getLimitSwitchArray();
        if(al.size()<=0) {
-   	     pneumaticscad.MessageBox(Config.getString("Actuator.noLS"), "Error");
+   	     owner.MessageBox(Config.getString("Actuator.noLS"), "Error");
    	     return;
        }
-       DBDialog dbDialog = new DBDialog(pneumaticscad.frame,al,Config.getString("Actuator.SelectLS2"),false);
+       DBDialog dbDialog = new DBDialog(owner.getFrame(),al,Config.getString("Actuator.SelectLS2"),false);
        dbDialog.pack();
        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
        dbDialog.setLocation(screenSize.width/2 - dbDialog.getSize().width/2,screenSize.height/2 - dbDialog.getSize().height/2);
        dbDialog.setVisible(true);
        Valve ed=(Valve) dbDialog.getObject();  
        addValve(ed,0);
-       pneumaticscad.repaint();
+       pneumaticPanel.repaint();
        
      }
      else if(option.equals(Config.getString("Actuator.A1")))
       {  float oldareaf=areaf;
-         customDialog = new CustomDialog(pneumaticscad.frame,Config.getString("Actuator.A1"),Config.getString("Actuator.modifyA1"),CustomDialog.VALUE_FLOAT);
+         customDialog = new CustomDialog(owner.getFrame(),Config.getString("Actuator.A1"),Config.getString("Actuator.modifyA1"),CustomDialog.VALUE_FLOAT);
          customDialog.pack();
          Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
          customDialog.setLocation(
@@ -910,12 +911,12 @@ public class Actuator extends PneumaticElement
          customDialog.setTextField(Float.toString(areaf));
          customDialog.setVisible(true);
          areaf=customDialog.getFloat();
-         pneumaticscad.addCommand(new changeAreaFCommand(this,oldareaf,areaf));
+         owner.addCommand(new changeAreaFCommand(this,oldareaf,areaf));
          
      }
     else if(option.equals(Config.getString("Actuator.A2")))
      {   float oldareab=areab;
-         customDialog = new CustomDialog(pneumaticscad.frame,Config.getString("Actuator.A2"),Config.getString("Actuator.modifyA2"),CustomDialog.VALUE_FLOAT);
+         customDialog = new CustomDialog(owner.getFrame(),Config.getString("Actuator.A2"),Config.getString("Actuator.modifyA2"),CustomDialog.VALUE_FLOAT);
          customDialog.pack();
          Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
          customDialog.setLocation(
@@ -924,12 +925,12 @@ public class Actuator extends PneumaticElement
          customDialog.setTextField(Float.toString(areab));
          customDialog.setVisible(true);
          areab=customDialog.getFloat();
-         pneumaticscad.addCommand(new changeAreaBCommand(this,oldareab,areab));
+         owner.addCommand(new changeAreaBCommand(this,oldareab,areab));
          
      }
     else if(option.equals(Config.getString("Actuator.forwardtimestep")))
      {   int oldftimeset=ftimeset;
-	     customDialog = new CustomDialog(pneumaticscad.frame,Config.getString("Actuator.forwardtimestep"),Config.getString("Actuator.modifyforwardtimestep"),CustomDialog.VALUE_INT);
+	     customDialog = new CustomDialog(owner.getFrame(),Config.getString("Actuator.forwardtimestep"),Config.getString("Actuator.modifyforwardtimestep"),CustomDialog.VALUE_INT);
          customDialog.pack();
          Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
          customDialog.setLocation(
@@ -938,13 +939,13 @@ public class Actuator extends PneumaticElement
          customDialog.setTextField(Integer.toString(ftimeset));
          customDialog.setVisible(true);
          ftimeset=customDialog.getInt();
-         pneumaticscad.addCommand(new changeFTimesetCommand(this,oldftimeset,ftimeset));
+         owner.addCommand(new changeFTimesetCommand(this,oldftimeset,ftimeset));
          
      }
     else if(option.equals(Config.getString("Actuator.backwardtimestep")))
      {   int oldbtimeset=btimeset;
       
-	     customDialog = new CustomDialog(pneumaticscad.frame,Config.getString("Actuator.backwardtimestep"),Config.getString("Actuator.modifybackwardtimestep"),CustomDialog.VALUE_INT);
+	     customDialog = new CustomDialog(owner.getFrame(),Config.getString("Actuator.backwardtimestep"),Config.getString("Actuator.modifybackwardtimestep"),CustomDialog.VALUE_INT);
          customDialog.pack();
          Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
          customDialog.setLocation(
@@ -953,7 +954,7 @@ public class Actuator extends PneumaticElement
          customDialog.setTextField(Integer.toString(btimeset));
          customDialog.setVisible(true);
          btimeset=customDialog.getInt();
-         pneumaticscad.addCommand(new changeBTimesetCommand(this,oldbtimeset,btimeset));         
+         owner.addCommand(new changeBTimesetCommand(this,oldbtimeset,btimeset));         
      }
     else if(option.equals(Config.getString("Actuator.reset")))
      {curImage=0;

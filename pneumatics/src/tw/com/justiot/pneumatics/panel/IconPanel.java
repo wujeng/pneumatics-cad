@@ -1,12 +1,22 @@
 package tw.com.justiot.pneumatics.panel;
 
-import tw.com.justiot.pneumatics.*;
-import tw.com.justiot.pneumatics.config.*;
+import java.awt.BorderLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import java.util.*;
+import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
+
+import tw.com.justiot.pneumatics.Config;
+import tw.com.justiot.pneumatics.PneumaticsCAD;
+import tw.com.justiot.pneumatics.config.ElementParameter;
+import tw.com.justiot.pneumatics.config.PneumaticConfig;
 
 public class IconPanel extends JPanel
  {public static final int Command_createElement=1;

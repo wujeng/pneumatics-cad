@@ -29,31 +29,19 @@ import tw.com.justiot.pneumatics.config.ElementParameter;
 import tw.com.justiot.pneumatics.config.PneumaticConfig;
 import tw.com.justiot.pneumatics.dialog.CustomDialog;
 import tw.com.justiot.pneumatics.panel.ConnectEvent;
+import tw.com.justiot.pneumatics.panel.PneumaticListener;
+import tw.com.justiot.pneumatics.panel.PneumaticPanel;
 import tw.com.justiot.pneumatics.part.BoardElement;
 import tw.com.justiot.pneumatics.part.Port;
 import tw.com.justiot.pneumatics.part.Position;
 
-//import com.wujeng.data.*;
-//import com.wujeng.data.config.*;
-//import com.wujeng.data.dialog.*;
-//import com.wujeng.data.panel.*;
-//import com.wujeng.data.part.*;
-
-//import java.awt.*;
-//import java.awt.event.*;
-//import javax.swing.*;
-//import java.util.*;
-//import java.awt.geom.AffineTransform;
-/*
-commandListener.add(new rotateCommand(this));
-commandListener.add(new changeNameCommand(this,oldname,name));
-*/
 public abstract class PneumaticElement extends JPanel implements MouseListener,MouseMotionListener,ActionListener
  {public static final int Command_rotate=1;
   public static final int Command_changeName=2;
                                 
   public static boolean refresh=true; 
-  protected PneumaticsCAD pneumaticscad;
+//  protected PneumaticsCAD pneumaticscad;
+  protected PneumaticListener owner;
   private String name;
   protected String modelType;
   public String modelName;
@@ -79,11 +67,13 @@ public abstract class PneumaticElement extends JPanel implements MouseListener,M
   
   private static Hashtable nametable=new Hashtable();
   
-  protected static tw.com.justiot.pneumatics.panel.PneumaticPanel container;
+  protected tw.com.justiot.pneumatics.panel.PneumaticPanel pneumaticPanel;
   
-  public PneumaticElement(String mname,boolean hasName, PneumaticsCAD pneumaticscad)
+  public PneumaticElement(String mname,boolean hasName, PneumaticListener owner)
    {super(true);
-    this.pneumaticscad=pneumaticscad;
+//    this.pneumaticscad=pneumaticscad;
+    this.owner=owner;
+    this.pneumaticPanel=owner.getPneumaticPanel();
     if(PneumaticConfig.parameter.containsKey(mname))
      {ElementParameter ep=(ElementParameter) PneumaticConfig.parameter.get(mname);
   //System.out.println("element:"+ep.modelName);   
@@ -125,10 +115,9 @@ public abstract class PneumaticElement extends JPanel implements MouseListener,M
 //      for(int i=0;i<images.length;i++)
 //       osg.drawImage(images[i],0,0,this);
       if(hasName) setName(defaultName());
-      if(container==null) container=pneumaticscad.pneumatics.pneumaticPanel;
       
       if(modelType.equals("Actuator") || modelType.equals("Delay"))
-       {startTimer(pneumaticscad.timer);
+       {startTimer(pneumaticPanel.timer);  // not pneumaticPanel.startTimer()
        }
      }
    }  
@@ -189,6 +178,7 @@ public abstract class PneumaticElement extends JPanel implements MouseListener,M
     Color color0=g2.getColor();
     translate= AffineTransform.getTranslateInstance(translatex,translatey);
     translate.concatenate(AffineTransform.getRotateInstance(angle));
+//   System.out.println(modelType+" curImage:"+curImage);
     g2.drawImage(images[curImage],translate,this);
 //    if(mode==MODE_EDIT)
      {int x1=0,y1=0;
@@ -388,7 +378,7 @@ public abstract class PneumaticElement extends JPanel implements MouseListener,M
     return sb.toString()+extraWrite();
    }
 
-  public static tw.com.justiot.pneumatics.pneumaticelement.PneumaticElement read(String str, PneumaticsCAD pneumaticscad) throws Exception
+  public static tw.com.justiot.pneumatics.pneumaticelement.PneumaticElement read(String str, PneumaticListener pneumaticscad) throws Exception
    { 
     StringTokenizer token=new StringTokenizer(str);
     int dtype=Integer.parseInt(token.nextToken());
@@ -449,8 +439,8 @@ public abstract class PneumaticElement extends JPanel implements MouseListener,M
         y1=pos.y-deltay;
         y2=pos.y+deltay;
         if(x > x1 && x < x2 && y > y1 && y < y2)
-         {if(pneumaticscad.pneumatics.pneumaticPanel!=null)
-        	 pneumaticscad.pneumatics.pneumaticPanel.portClicked(new ConnectEvent(this,ports[i],getX()+x,getY()+y));
+         {if(pneumaticPanel!=null)
+        	 pneumaticPanel.portClicked(new ConnectEvent(this,ports[i],getX()+x,getY()+y));
          }
        }
      }
@@ -487,8 +477,8 @@ public abstract class PneumaticElement extends JPanel implements MouseListener,M
 //        setLocation(pressedPosx+ex-pressedx,pressedPosy+ey-pressedy);
 //         moveTo(pressedPosx+ex-pressedx,pressedPosy+ey-pressedy);
        setLocation(pressedPosx+ex-pressedx,pressedPosy+ey-pressedy);
-       container.repaint();
-       pneumaticscad.setModified(true);
+       pneumaticPanel.repaint();
+       owner.setModified(true);
         drag=false;
        }
       else
@@ -535,8 +525,8 @@ public abstract class PneumaticElement extends JPanel implements MouseListener,M
         pressedPosx=getLocation().x;
         pressedPosy=getLocation().y;  
         setLocation(pressedPosx+ex-pressedx,pressedPosy+ey-pressedy);
-        container.repaint();
-        pneumaticscad.setModified(true);
+        pneumaticPanel.repaint();
+        owner.setModified(true);
         
         
         
@@ -597,15 +587,15 @@ public abstract class PneumaticElement extends JPanel implements MouseListener,M
      if(option.equals(Config.getString("Element.delete")))
      {//if(elementListener!=null) 
       // elementListener.delete(new ElementEvent(this));
-    	 container.deleteElement(this);
+    	 pneumaticPanel.deleteElement(this);
      }
     else if(option.equals(Config.getString("popup.rotate")))
      {rotate();
-     pneumaticscad.addCommand(new rotateCommand(this));
+      owner.addCommand(new rotateCommand(this));
      }
     else if(option.equals(Config.getString("popup.name")))
      {String oldname=name;
-	  customDialog = new CustomDialog(pneumaticscad.frame,Config.getString("popup.name"),Config.getString("popup.modifyname"),CustomDialog.VALUE_STRING);
+	  customDialog = new CustomDialog(owner.getFrame(),Config.getString("popup.name"),Config.getString("popup.modifyname"),CustomDialog.VALUE_STRING);
       customDialog.pack();
       Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
       customDialog.setLocation(
@@ -614,7 +604,7 @@ public abstract class PneumaticElement extends JPanel implements MouseListener,M
       customDialog.setTextField(name);
       customDialog.setVisible(true);
       name=customDialog.getValidatedText();         
-      pneumaticscad.addCommand(new changeNameCommand(this,oldname,name));
+      owner.addCommand(new changeNameCommand(this,oldname,name));
      }
   }
 

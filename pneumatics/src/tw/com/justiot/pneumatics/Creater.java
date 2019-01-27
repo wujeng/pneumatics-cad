@@ -1,8 +1,10 @@
 package tw.com.justiot.pneumatics;
 
+import tw.com.justiot.pneumatics.panel.PneumaticListener;
+
 public class Creater 
  {
-  public static Object instanceElement(String modelType,String modelName,PneumaticsCAD pneumaticscad) throws Exception
+  public static Object instanceElement(String modelType,String modelName,PneumaticListener pneumaticscad) throws Exception
   {tw.com.justiot.pneumatics.pneumaticelement.PneumaticElement ele=null;
    if(modelType.equals("Actuator"))
     {

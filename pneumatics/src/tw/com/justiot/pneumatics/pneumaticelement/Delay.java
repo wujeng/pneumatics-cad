@@ -17,14 +17,10 @@ import tw.com.justiot.pneumatics.PneumaticsCAD;
 import tw.com.justiot.pneumatics.config.DelayParameter;
 import tw.com.justiot.pneumatics.config.PneumaticConfig;
 import tw.com.justiot.pneumatics.dialog.CustomDialog;
+import tw.com.justiot.pneumatics.panel.PneumaticListener;
 import tw.com.justiot.pneumatics.part.Line;
 import tw.com.justiot.pneumatics.part.Port;
 import tw.com.justiot.pneumatics.part.Position;
-
-//import com.wujeng.data.*;
-//import com.wujeng.data.config.*;
-//import com.wujeng.data.dialog.*;
-//import com.wujeng.data.part.*;
 
 // port[0] : A port
 // port[1] : Z port
@@ -44,7 +40,7 @@ public class Delay extends PneumaticElement
 
   private boolean activated=false;
   public static int allcount=0;
-  public Delay(String mname,PneumaticsCAD pneumaticscad)
+  public Delay(String mname,PneumaticListener pneumaticscad)
    {super(mname,true,pneumaticscad);
     
     if(PneumaticConfig.parameter.containsKey(mname))
@@ -277,7 +273,7 @@ public class Delay extends PneumaticElement
       String option=mi.getText();  
 //System.err.println("option:"+option);
      if(option.equals(Config.getString("Delay.preset")))
-      {CustomDialog customDialog = new CustomDialog(pneumaticscad.frame,"Enter Delay Load","Enter timer preset value?",CustomDialog.VALUE_INT);
+      {CustomDialog customDialog = new CustomDialog(owner.getFrame(),"Enter Delay Load","Enter timer preset value?",CustomDialog.VALUE_INT);
           customDialog.pack();
           Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
           customDialog.setLocation(

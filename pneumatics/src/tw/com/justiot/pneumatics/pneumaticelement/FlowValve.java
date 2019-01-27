@@ -15,18 +15,10 @@ import tw.com.justiot.pneumatics.PneumaticsCAD;
 import tw.com.justiot.pneumatics.config.FlowValveParameter;
 import tw.com.justiot.pneumatics.config.PneumaticConfig;
 import tw.com.justiot.pneumatics.dialog.CustomDialog;
+import tw.com.justiot.pneumatics.panel.PneumaticListener;
 import tw.com.justiot.pneumatics.part.Line;
 import tw.com.justiot.pneumatics.part.Port;
 
-//import com.wujeng.data.*;
-//import com.wujeng.data.config.*;
-//import com.wujeng.data.dialog.*;
-//import com.wujeng.data.part.*;
-
-//import java.awt.*;
-//import java.awt.event.*;
-//import javax.swing.*;
-//import java.util.*;
 
 public class FlowValve extends PneumaticElement
  {
@@ -42,7 +34,7 @@ public class FlowValve extends PneumaticElement
 //  1Flow   Non-adjustable_One_Way_Flow_Valve 34 28 images/SymFLow/1Flow1.GIF    34 28 images/SymFlow/1Flow.GIF  2 21 left 30 21 right 1 0
 //  1FlowA  Adjustable_One_Way_Flow_Valve 34 28 images/SymFLow/1FlowA1.GIF   34 28 images/SymFlow/1FlowA.GIF 2 21 left 30 21 right 1 1
 //  Exhaust  Fast_Exhaust_Line
-  public FlowValve(String mname,PneumaticsCAD pneumaticscad)
+  public FlowValve(String mname,PneumaticListener pneumaticscad)
    {super(mname,false,pneumaticscad);
     if(PneumaticConfig.parameter.containsKey(mname))
      {FlowValveParameter ep=(FlowValveParameter) PneumaticConfig.parameter.get(mname);
@@ -208,7 +200,7 @@ public class FlowValve extends PneumaticElement
       String option=mi.getText();  
 //System.err.println("option:"+option);
      if(option.equals(Config.getString("FlowValve.FlowRate")))
-      {CustomDialog customDialog = new CustomDialog(pneumaticscad.frame,Config.getString("FlowValve.FlowRate"),Config.getString("FlowValve.AdjustFlowRate"),CustomDialog.VALUE_INT);
+      {CustomDialog customDialog = new CustomDialog(owner.getFrame(),Config.getString("FlowValve.FlowRate"),Config.getString("FlowValve.AdjustFlowRate"),CustomDialog.VALUE_INT);
        customDialog.pack();
        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
        customDialog.setLocation(screenSize.width/2 - customDialog.getSize().width/2,screenSize.height/2 - customDialog.getSize().height/2);

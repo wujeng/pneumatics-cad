@@ -43,6 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
@@ -52,21 +53,23 @@ import tw.com.justiot.pneumatics.config.CircuitParameter;
 import tw.com.justiot.pneumatics.config.PneumaticConfig;
 import tw.com.justiot.pneumatics.dialog.CircuitFilter;
 import tw.com.justiot.pneumatics.panel.IconPanel;
+import tw.com.justiot.pneumatics.panel.PneumaticListener;
+import tw.com.justiot.pneumatics.panel.PneumaticPanel;
 
-public class PneumaticsCAD extends JPanel implements ChangeListener,WindowListener
-  { 
-	private static final long serialVersionUID = 1L;
+public class PneumaticsCAD extends JPanel implements ChangeListener,WindowListener, PneumaticListener
+  { public String lang; // "tw", "en"
+    private PropertyControl propertyControl;
 	public Args args;
-	public static Config config;
-	
     private ArrayList<Command> commands=new ArrayList<Command>();
     private int commandIndex=-1;
     
-    public java.util.Timer timer=new java.util.Timer();
 	public Pneumatics pneumatics=null;
+	public PneumaticPanel getPneumaticPanel() {return pneumatics.pneumaticPanel;}
     public JFrame frame = null;
+    public JFrame getFrame() {return frame;}
     private  JTextField statusField = null;
     public void setStatus(String s) {statusField.setText(s);}
+    public Image iconImage;
     
    public static final int Data_Element=0;
    public static final int Data_Line=1;
@@ -81,14 +84,15 @@ public class PneumaticsCAD extends JPanel implements ChangeListener,WindowListen
 
      public boolean modified=false;
      public File file;
-     private PneumaticsCAD self;
     public static void main(String[] args) 
-     {config = new Config();
-      new PneumaticsCAD(args);
+     {new PneumaticsCAD(args);
      }
     
    public void windowClosing(WindowEvent e) 
     {pneumatics.pneumaticPanel.stopTimer();
+//  Config.saveProperties(null);
+     propertyControl.updateProperties();
+     propertyControl.saveProperties();
      System.exit(0);
     }
    public void windowOpened(WindowEvent e) {}
@@ -101,11 +105,14 @@ public class PneumaticsCAD extends JPanel implements ChangeListener,WindowListen
     public PneumaticsCAD(String[] margs) 
      { super();
        args=new Args(margs);
-       
-       self=this;
+       propertyControl=new PropertyControl(this);
+       lang=propertyControl.getLang();
+       new Config(lang);
+       System.out.println("lang="+lang);
+       iconImage=util.loadImage("webladdercad","","iconImage",File.separator+"resources"+File.separator+"images"+File.separator+"webladdercad.gif");
        setLayout(new BorderLayout()); 
        
-       new PneumaticConfig();     // read config.txt
+       new PneumaticConfig(lang);     // read Config.txt
        pneumatics=new Pneumatics(this);
 	   add(pneumatics,BorderLayout.CENTER);
 
@@ -121,16 +128,27 @@ public class PneumaticsCAD extends JPanel implements ChangeListener,WindowListen
         
        if(args.exampleURL!=null) loadExample();
        
-       frame = new JFrame();
-           Image iconImage=util.loadImage("webladdercad","","iconImage",File.separator+"resources"+File.separator+"images"+File.separator+"webladdercad.gif");
-           if(iconImage!=null) frame.setIconImage(iconImage);
-     	  frame.setTitle(config.getString("window.title"));
-     	  frame.getContentPane().add(this, BorderLayout.CENTER);
-           frame.addWindowListener(this);
-           frame.setSize(config.getInt("window.width"),config.getInt("window.height"));
-           frame.setVisible(true);  
+       SwingUtilities.invokeLater(new Runnable() {
+       	public void run() {
+       		showFrame();
+       	}
+       });
     }
-    
+    public void showFrame()
+    {
+		frame = new JFrame();
+			  frame.addWindowListener(this);
+			  if(iconImage!=null) frame.setIconImage(iconImage);
+	    frame.getContentPane().add(this, BorderLayout.CENTER);
+		propertyControl.applyWinProperties();
+		setTitle();
+		frame.pack();
+		frame.setVisible(true);
+    }
+  private void setTitle() {
+	if(file==null) frame.setTitle(Config.getString("Frame.title"));
+	else  frame.setTitle(Config.getString("Frame.title")+"-"+file.getAbsolutePath());
+  }
 //-------------------------------------
 //    
   public boolean saveAs()
@@ -473,11 +491,6 @@ public class PneumaticsCAD extends JPanel implements ChangeListener,WindowListen
 	  helpMenu.getAccessibleContext().setAccessibleDescription(Config.getString("helpMenu.accessible_description"));
 //      if(isApplet())
       createMenuItem(helpMenu,"H_online","helpMenu.online_label","helpMenu.online_mnemonic","helpMenu.online_accessible_description", aAction);
-
-      helpMenu.addSeparator();
-      createMenuItem(helpMenu,"H_register","helpMenu.register_label","helpMenu.register_mnemonic","helpMenu.register_accessible_description", aAction);
-       
-      helpMenu.addSeparator();
       createMenuItem(helpMenu,"H_about","helpMenu.about_label", "helpMenu.about_mnemonic","helpMenu.about_accessible_description", aAction);
 
 	  return menuBar;
@@ -485,10 +498,10 @@ public class PneumaticsCAD extends JPanel implements ChangeListener,WindowListen
 
    public JMenuItem createMenuItem(JMenu menu,String acommand, String label, String mnemonic,String accessibleDescription, Action action) 
     {JMenuItem mi=null;
-	 mi = (JMenuItem) menu.add(new JMenuItem(config.getString(label)));
+	 mi = (JMenuItem) menu.add(new JMenuItem(Config.getString(label)));
 	 mi.setActionCommand(acommand);
      mi.setMnemonic(getMnemonic(mnemonic));
-	 mi.getAccessibleContext().setAccessibleDescription(config.getString(accessibleDescription));
+	 mi.getAccessibleContext().setAccessibleDescription(Config.getString(accessibleDescription));
 	 mi.addActionListener(action);
      mi.addMouseListener(allmenuItemMouseAdapter);
 	 if(action==null) mi.setEnabled(false);
@@ -567,6 +580,9 @@ public class PneumaticsCAD extends JPanel implements ChangeListener,WindowListen
                 JOptionPane.YES_NO_OPTION);
       if (value == JOptionPane.YES_OPTION) 
        {pneumatics.pneumaticPanel.stopTimer();
+//        Config.saveProperties(null);
+        propertyControl.updateProperties();
+        propertyControl.saveProperties();
         System.exit(0);
        }
      }
@@ -583,6 +599,22 @@ public class PneumaticsCAD extends JPanel implements ChangeListener,WindowListen
     else if(com.equals("E_saveProperty"))
     {
     }
+    else if(com.equals("H_online"))
+    {URL url=null;
+     try
+      {WebBrowser wb=new WebBrowser(iconImage);
+       wb.setVisible(true);
+      }
+     catch(Exception ue)
+      {System.err.println(ue.getMessage());
+       System.err.println("error helpURL!");
+       setStatus(Config.getString("pneumatics.s31"));
+       return;
+      }
+//System.err.println(url.toString());
+//           getApplet().getAppletContext().showDocument(url,"_blank");
+    }
+    
   }
 
     class OkAction extends AbstractAction 
@@ -599,7 +631,7 @@ public class PneumaticsCAD extends JPanel implements ChangeListener,WindowListen
 	  PneumaticsCAD pneumatics = null;
 	  public AboutPanel(PneumaticsCAD pneu) 
 	   {this.pneumatics = pneu;
-	    aboutimage = util.loadImageIcon("/images/About.jpg");
+	    aboutimage = util.loadImageIcon(File.separator+"resources"+File.separator+"images"+File.separator+"About.jpg");
 	    setOpaque(false);
 	   }
 	  public void paint(Graphics g) 
@@ -703,7 +735,8 @@ public class PneumaticsCAD extends JPanel implements ChangeListener,WindowListen
 
   public void createElement(String modelType,String command) throws Exception
   {
-   Object obj=Creater.instanceElement(modelType,command, self);
+//   Object obj=Creater.instanceElement(modelType,command, self);
+   Object obj=Creater.instanceElement(modelType,command, this);
    if(obj!=null)
     {
      tw.com.justiot.pneumatics.pneumaticelement.PneumaticElement element=(tw.com.justiot.pneumatics.pneumaticelement.PneumaticElement) obj;

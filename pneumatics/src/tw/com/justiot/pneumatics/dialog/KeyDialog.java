@@ -10,13 +10,12 @@ import java.beans.PropertyChangeListener;
 
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import tw.com.justiot.pneumatics.Config;
-import tw.com.justiot.pneumatics.PneumaticsCAD;
 
 public class KeyDialog extends JDialog {
-	private PneumaticsCAD pneumaticscad;
     private JOptionPane optionPane;
     private int key;
     private String keyString;
@@ -25,9 +24,8 @@ public class KeyDialog extends JDialog {
     public int getKey() {return key;}
     public String getKeyString() {return keyString;}
 
-    public KeyDialog(PneumaticsCAD pneumaticscad) 
-     {super(pneumaticscad.frame, true);
-      this.pneumaticscad=pneumaticscad;
+    public KeyDialog(JFrame frame) 
+     {super(frame, true);
 //      Image iconImage=Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/images/webladdercad.gif"));
 //      setIconImage(iconImage);
 //      setTitle("Set ActivateKey");

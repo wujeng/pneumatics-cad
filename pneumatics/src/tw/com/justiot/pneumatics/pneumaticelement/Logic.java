@@ -3,14 +3,13 @@ package tw.com.justiot.pneumatics.pneumaticelement;
 import tw.com.justiot.pneumatics.PneumaticsCAD;
 import tw.com.justiot.pneumatics.config.LogicParameter;
 import tw.com.justiot.pneumatics.config.PneumaticConfig;
+import tw.com.justiot.pneumatics.panel.PneumaticListener;
 import tw.com.justiot.pneumatics.part.Port;
 
-//import com.wujeng.data.config.*;
-//import com.wujeng.data.part.*;
 
 public class Logic extends PneumaticElement
  {private Port aport,xport,yport;
-  public Logic(String mname,PneumaticsCAD pneumaticscad)
+  public Logic(String mname,PneumaticListener pneumaticscad)
    {super(mname,false,pneumaticscad);
     if(PneumaticConfig.parameter.containsKey(mname))
      {LogicParameter ep=(LogicParameter) PneumaticConfig.parameter.get(mname);

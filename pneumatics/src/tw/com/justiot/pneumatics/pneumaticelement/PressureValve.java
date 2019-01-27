@@ -14,22 +14,16 @@ import tw.com.justiot.pneumatics.PneumaticsCAD;
 import tw.com.justiot.pneumatics.config.PneumaticConfig;
 import tw.com.justiot.pneumatics.config.PressureValveParameter;
 import tw.com.justiot.pneumatics.dialog.CustomDialog;
+import tw.com.justiot.pneumatics.panel.PneumaticListener;
 import tw.com.justiot.pneumatics.part.Line;
 import tw.com.justiot.pneumatics.part.Port;
 
-//import com.wujeng.data.*;
-//import com.wujeng.data.config.*;
-//import com.wujeng.data.dialog.*;
-//import com.wujeng.data.part.*;
-//import java.awt.*;
-//import java.awt.event.*;
-//import javax.swing.*;
 
 public class PressureValve extends PneumaticElement
  {private float preset;
   private PressureValve seft;
 
-  public PressureValve(String mname,PneumaticsCAD pneumaticscad)
+  public PressureValve(String mname,PneumaticListener pneumaticscad)
    {super(mname,false,pneumaticscad);
     if(PneumaticConfig.parameter.containsKey(mname))
      {PressureValveParameter ep=(PressureValveParameter) PneumaticConfig.parameter.get(mname);

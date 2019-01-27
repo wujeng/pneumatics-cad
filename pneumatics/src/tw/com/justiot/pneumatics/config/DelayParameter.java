@@ -1,6 +1,7 @@
 package tw.com.justiot.pneumatics.config;
 
-import tw.com.justiot.pneumatics.part.*;
+import tw.com.justiot.pneumatics.part.Port;
+import tw.com.justiot.pneumatics.part.Position;
 
 public class DelayParameter extends ElementParameter
  {public Port[] ports;

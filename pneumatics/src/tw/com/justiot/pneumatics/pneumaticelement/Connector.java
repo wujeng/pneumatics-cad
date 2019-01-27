@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import tw.com.justiot.pneumatics.PneumaticsCAD;
 import tw.com.justiot.pneumatics.config.ConnectorParameter;
 import tw.com.justiot.pneumatics.config.PneumaticConfig;
+import tw.com.justiot.pneumatics.panel.PneumaticListener;
 import tw.com.justiot.pneumatics.part.Line;
 import tw.com.justiot.pneumatics.part.Port;
 
 public class Connector extends PneumaticElement
  {
-  public Connector(String mname,PneumaticsCAD pneumaticscad)
+  public Connector(String mname,PneumaticListener pneumaticscad)
    {super(mname,false,pneumaticscad);
     if(PneumaticConfig.parameter.containsKey(mname))
      {ConnectorParameter ep=(ConnectorParameter) PneumaticConfig.parameter.get(mname);

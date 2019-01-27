@@ -17,7 +17,7 @@ import tw.com.justiot.pneumatics.part.Position;
 
 public class PneumaticConfig
  {
-  private static final String file=File.separator+"resources"+File.separator+"config.txt";
+  private static final String file=File.separator+"resources"+File.separator+"config";
   public static ArrayList keylist=new ArrayList();
   public static Hashtable parameter=new Hashtable();
   public static Hashtable circuit=new Hashtable();
@@ -25,7 +25,7 @@ public class PneumaticConfig
   private static void addkey(String key) {
 	  keylist.add(key);
 	}
-  public PneumaticConfig()
+  public PneumaticConfig(String lang)
    {	   
 	String line=null;
     InputStream is;
@@ -33,13 +33,8 @@ public class PneumaticConfig
     URL url;
 
     try
-     {
-//      url = getClass().getResource(Paths.get("").toAbsolutePath().toString()+file); 
-//      is = url.openStream();
-//      isr = new InputStreamReader(is);
-//      BufferedReader breader=new BufferedReader(isr);
-//    	System.out.println(Paths.get("").toAbsolutePath().toString()+file);
-    	BufferedReader breader=new BufferedReader(new FileReader(Paths.get("").toAbsolutePath().toString()+file));
+     {String fstr=file+"-"+lang+".txt";
+    	BufferedReader breader=new BufferedReader(new FileReader(Paths.get("").toAbsolutePath().toString()+fstr));
       while((line=breader.readLine()) != null)
        {if(line.length()<=0) continue;
         if(line.substring(0,1).equals("%")) continue;

@@ -1,13 +1,8 @@
 package tw.com.justiot.pneumatics.panel;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.util.EventObject;
 
-import tw.com.justiot.pneumatics.part.*;
-
-import java.awt.geom.*;
-import java.io.*;
+import tw.com.justiot.pneumatics.part.Port;
 
 public class ConnectEvent extends EventObject 
  {public Port port;

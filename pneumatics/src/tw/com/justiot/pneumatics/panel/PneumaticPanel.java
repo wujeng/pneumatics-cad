@@ -1,31 +1,45 @@
 package tw.com.justiot.pneumatics.panel;
 
-import tw.com.justiot.pneumatics.*;
-import tw.com.justiot.pneumatics.dialog.*;
-import tw.com.justiot.pneumatics.part.*;
-import tw.com.justiot.pneumatics.pneumaticelement.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.util.TimerTask;
 
-//import com.wujeng.data.eelement.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import java.util.*;
-import java.io.*;
-import java.text.NumberFormat;
-/*
-commandListener.add(new selectLineCommand(this,inlin));
-commandListener.add(new moveGroupCommand(this,modified,garray,delx,dely));
-commandListener.add(new groupCommand(this,oldgroup,groupArray));
-commandListener.add(new pasteBoardToCommand(this,modified,oldBoardArray,oldBoardLineArray,tempArray,tempLineArray));
-commandListener.add(new copyToBoardCommand(this,modified,new ArrayList(boardArray),new ArrayList(boardLineArray),oldbArray,oldbLineArray));    
-commandListener.add(new deleteLineCommand(this,modified,sline,line));
-commandListener.add(new changeFlowIncCommand(this,modified0,lineinc,Line.inc));            
-commandListener.add(new deleteGroupCommand(this,modified0,garray,lines));             
-commandListener.add(new deleteCommand(element,modified,lines));
-commandListener.add(new addLineCommand(ce.getSource(),modified,line));
-commandListener.add(new portClickedCommand(ce.getSource(),modified,line0,initPos0,curPos0,ce.port,ce.x,ce.y));
-commandListener.add(new moveElementCommand(element,modified,me.x,me.y,x0,y0));
-*/
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+
+import tw.com.justiot.pneumatics.Command;
+import tw.com.justiot.pneumatics.Config;
+import tw.com.justiot.pneumatics.Creater;
+import tw.com.justiot.pneumatics.PneumaticsCAD;
+import tw.com.justiot.pneumatics.dialog.CustomDialog;
+import tw.com.justiot.pneumatics.part.BoardElement;
+import tw.com.justiot.pneumatics.part.BoardLine;
+import tw.com.justiot.pneumatics.part.Line;
+import tw.com.justiot.pneumatics.part.Port;
+import tw.com.justiot.pneumatics.part.Position;
+import tw.com.justiot.pneumatics.pneumaticelement.Actuator;
+import tw.com.justiot.pneumatics.pneumaticelement.PneumaticElement;
+import tw.com.justiot.pneumatics.pneumaticelement.Valve;
 
 public class PneumaticPanel extends JPanel implements MouseListener,MouseMotionListener,KeyListener,ActionListener
  {public static final int Command_selectLine=1;
@@ -43,8 +57,9 @@ public class PneumaticPanel extends JPanel implements MouseListener,MouseMotionL
 	 
   private static final int TimerPeriod=200;
   private static final int iterationNo=10; //  // iteration must be large enough to correctly simulate.
-  
-  private PneumaticsCAD pneumaticscad;
+  public java.util.Timer timer=new java.util.Timer();
+ // private PneumaticsCAD pneumaticscad;
+  private PneumaticListener pneumaticscad;
   public ArrayList tempElementArray=new ArrayList();
   public ArrayList lineArray;
   public ArrayList groupArray;
@@ -79,7 +94,7 @@ public class PneumaticPanel extends JPanel implements MouseListener,MouseMotionL
 	return al;  
   }
   
-  public PneumaticPanel(PneumaticsCAD pneumaticscad)
+  public PneumaticPanel(PneumaticListener pneumaticscad)
    {super();
     this.pneumaticscad=pneumaticscad;
     setLayout(null);
@@ -122,15 +137,15 @@ public class PneumaticPanel extends JPanel implements MouseListener,MouseMotionL
 
  public void stopTimer()
   {
-   if(pneumaticscad.timer==null) return;
-   pneumaticscad.timer.cancel();
-   pneumaticscad.timer=null;
+   if(timer==null) return;
+   timer.cancel();
+   timer=null;
   }
   
   public void startTimer()
    {
-	if(pneumaticscad.timer==null) pneumaticscad.timer=new java.util.Timer();
-	pneumaticscad.timer.scheduleAtFixedRate(new CheckThread(), 0, TimerPeriod);
+	if(timer==null) timer=new java.util.Timer();
+	timer.scheduleAtFixedRate(new CheckThread(), 0, TimerPeriod);
    } 
  
   class CheckThread extends TimerTask 
@@ -907,6 +922,7 @@ public void openLimitswitch(String str)
 	       repaint();
 //	       if(commandListener!=null) commandListener.add(new selectLineCommand(this,inlin));
           }
+         else selectedLine=null;
         }
       }
      }

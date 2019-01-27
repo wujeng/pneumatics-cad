@@ -8,20 +8,17 @@ import java.awt.Graphics2D;
 import tw.com.justiot.pneumatics.PneumaticsCAD;
 import tw.com.justiot.pneumatics.config.GaugeParameter;
 import tw.com.justiot.pneumatics.config.PneumaticConfig;
+import tw.com.justiot.pneumatics.panel.PneumaticListener;
 import tw.com.justiot.pneumatics.part.Line;
 import tw.com.justiot.pneumatics.part.Port;
 import tw.com.justiot.pneumatics.part.Position;
 
-//import com.wujeng.data.config.*;
-//import com.wujeng.data.part.*;
-
-//import java.awt.*;
 
 public class Gauge extends PneumaticElement
  {private float preset;
   private Position textPos;
 
-  public Gauge(String mname,PneumaticsCAD pneumaticscad)
+  public Gauge(String mname,PneumaticListener pneumaticscad)
    {super(mname,false,pneumaticscad);
     if(PneumaticConfig.parameter.containsKey(mname))
      {GaugeParameter ep=(GaugeParameter) PneumaticConfig.parameter.get(mname);

@@ -14,20 +14,11 @@ import tw.com.justiot.pneumatics.PneumaticsCAD;
 import tw.com.justiot.pneumatics.config.PneumaticConfig;
 import tw.com.justiot.pneumatics.config.ValveParameter;
 import tw.com.justiot.pneumatics.dialog.KeyDialog;
+import tw.com.justiot.pneumatics.panel.PneumaticListener;
 import tw.com.justiot.pneumatics.part.Line;
 import tw.com.justiot.pneumatics.part.Port;
 import tw.com.justiot.pneumatics.part.Position;
 
-//import com.wujeng.data.*;
-//import com.wujeng.data.config.*;
-//import com.wujeng.data.dialog.*;
-//import com.wujeng.data.part.*;
-
-//import com.wujeng.data.eelement.*;
-//import java.awt.*;
-//import java.awt.event.*;
-//import javax.swing.*;
-//import java.util.*;
 
 public class Valve extends PneumaticElement
  {
@@ -60,7 +51,7 @@ public class Valve extends PneumaticElement
 
   private Valve seft;
 
-  public Valve(String mname,PneumaticsCAD pneumaticscad)
+  public Valve(String mname,PneumaticListener pneumaticscad)
    {super(mname,true,pneumaticscad);
     if(PneumaticConfig.parameter.containsKey(mname))
      {ValveParameter ep=(ValveParameter) PneumaticConfig.parameter.get(mname);
@@ -156,6 +147,8 @@ public class Valve extends PneumaticElement
 //      toggle=false;
       activateKey=-1;
      }    
+    
+ //   reset();
    }
 
   private Port getPort(String ch)
@@ -176,16 +169,20 @@ public class Valve extends PneumaticElement
     {return forceOn[no];}
 
   public void reset()
-   {setForce(forceNumber-1,true);
+   {super.reset();
+	setForce(forceNumber-1,true);
     setForce(forceNumber-1,false);
     for(int i=0;i<forceNumber-1;i++)
      setForce(i,false);
    }  
     
   public void setForce(int no,boolean onoff)
-   {if((no+1)>forceNumber) return;
+   {
+	//System.out.println(no+" "+onoff);  
+	if((no+1)>forceNumber) return;
     if(forceOn[no]==onoff) return;
     forceOn[no]=onoff;
+ //   System.out.println(memory);
     if(forceOn[no])
      {
       if(memory)
@@ -202,8 +199,13 @@ public class Valve extends PneumaticElement
        {curConnection=connections[0];
         curImage=0;
        }
+      else
+       {curImage=no;
+    	 
+       }
      }
     repaint();
+ //   System.out.println("setForce curImage:"+curImage);
   }
 
   public Port[] nextPorts(Port pt)
@@ -319,7 +321,7 @@ public class Valve extends PneumaticElement
      {int x=ex,y=ey;
        int fposx=0,fposy=0;
       for(int i=0;i<forcePos.length;i++)
-       {if(forcePos[i]!=null && forceType==FORCE_MAN && memory)
+       {if(forcePos[i]!=null && (forceType==FORCE_MAN || forceType==FORCE_ELECTRIC) && memory)
          {fposx=getForcePosX(i);fposy=getForcePosY(i);
            if(x>fposx-delta && x<fposx+delta && y>fposy-delta && y<fposy+delta)
            {setForce(i,true);
@@ -338,7 +340,8 @@ public class Valve extends PneumaticElement
        {int x=ex,y=ey;
          int fposx=0,fposy=0;
         for(int i=0;i<forcePos.length;i++)
-         {if(forcePos[i]!=null && (forceType==FORCE_MAN || forceType==FORCE_ELECTRIC) && !memory)
+         {//if(forcePos[i]!=null && (forceType==FORCE_MAN || forceType==FORCE_ELECTRIC) && !memory)
+          if(forcePos[i]!=null && (forceType==FORCE_MAN || forceType==FORCE_ELECTRIC))
            {fposx=getForcePosX(i);fposy=getForcePosY(i);
    //System.out.println(x+":"+y+"    "+fposx+" "+fposy);        
              if(x>fposx-delta && x<fposx+delta && y>fposy-delta && y<fposy+delta)
@@ -355,7 +358,8 @@ public class Valve extends PneumaticElement
        {int x=ex,y=ey;
          int fposx=0,fposy=0;
         for(int i=0;i<forcePos.length;i++)
-         {if(forcePos[i]!=null && (forceType==FORCE_MAN || forceType==FORCE_ELECTRIC) && !memory)
+         {//if(forcePos[i]!=null && forceType==FORCE_MAN || forceType==FORCE_ELECTRIC) && !memory)
+          if(forcePos[i]!=null && (forceType==FORCE_MAN || forceType==FORCE_ELECTRIC))
            {fposx=getForcePosX(i);fposy=getForcePosY(i);
              if(x>fposx-delta && x<fposx+delta && y>fposy-delta && y<fposy+delta)
              {setForce(i,false);
@@ -408,7 +412,7 @@ public class Valve extends PneumaticElement
      if(option.equals(Config.getString("Element.delete")) && forceType==FORCE_MECHANIC)
       {
 //System.err.println("delete mechanic");
-       Component[] comps=pneumaticscad.pneumatics.pneumaticPanel.getComponents();
+       Component[] comps=pneumaticPanel.getComponents();
        Actuator act=null;
 //       ESystem sys=null;
        for(int i=0;i<comps.length;i++)
@@ -428,7 +432,7 @@ public class Valve extends PneumaticElement
       super.ActionPerformed(mi,op,input);
 //System.err.println("option:"+option);
      if(option.equals(Config.getString("Valve.ActivateKey")))
-     {KeyDialog keyDialog = new KeyDialog(pneumaticscad);
+     {KeyDialog keyDialog = new KeyDialog(owner.getFrame());
          keyDialog.pack();
          Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
          keyDialog.setLocation(
